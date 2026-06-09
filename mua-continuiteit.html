@@ -7,9 +7,9 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="MUA Set">
   <title>MUA Continuïteit</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
     body {
       background: #111;
       color: #f0f0f0;
@@ -17,192 +17,47 @@
       min-height: 100vh;
       padding: env(safe-area-inset-top, 20px) 16px env(safe-area-inset-bottom, 20px);
     }
-
-    header {
-      text-align: center;
-      padding: 24px 0 20px;
-    }
-
-    header h1 {
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #FFE033;
-    }
-
-    header p {
-      font-size: 0.72rem;
-      color: #555;
-      margin-top: 4px;
-      letter-spacing: 0.05em;
-    }
-
-    .card {
-      background: #1e1e1e;
-      border: 1px solid #2a2a2a;
-      border-radius: 14px;
-      padding: 18px;
-      margin-bottom: 14px;
-    }
-
-    .field-label {
-      font-size: 0.65rem;
-      color: #666;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 6px;
-      display: block;
-    }
-
+    header { text-align: center; padding: 24px 0 20px; }
+    header h1 { font-size: 1rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #FFE033; }
+    header p { font-size: 0.72rem; color: #555; margin-top: 4px; }
+    .card { background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+    .field-label { font-size: 0.65rem; color: #666; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; display: block; }
     input[type="text"] {
-      width: 100%;
-      background: #111;
-      border: 1.5px solid #333;
-      border-radius: 10px;
-      color: #FFE033;
-      font-size: 1.4rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      padding: 12px 14px;
-      outline: none;
-      -webkit-appearance: none;
+      width: 100%; background: #111; border: 1.5px solid #333; border-radius: 10px;
+      color: #FFE033; font-size: 1.4rem; font-weight: 700; letter-spacing: 0.05em;
+      padding: 12px 14px; outline: none; -webkit-appearance: none;
     }
-
-    input[type="text"]:focus {
-      border-color: #FFE033;
-    }
-
-    .row {
-      display: flex;
-      gap: 10px;
-    }
-
+    input[type="text"]:focus { border-color: #FFE033; }
+    .row { display: flex; gap: 10px; }
     .row .field { flex: 1; }
-
-    input[type="range"] {
-      width: 100%;
-      accent-color: #FFE033;
-      margin-top: 6px;
+    input[type="range"] { width: 100%; accent-color: #FFE033; margin-top: 6px; }
+    .range-labels { display: flex; justify-content: space-between; font-size: 0.6rem; color: #444; margin-top: 2px; }
+    .quality-val { font-size: 0.72rem; font-weight: 600; float: right; }
+    .btn {
+      display: block; width: 100%; border: none; border-radius: 14px;
+      font-size: 1rem; font-weight: 800; letter-spacing: 0.04em;
+      padding: 16px; cursor: pointer; text-align: center; margin-bottom: 14px;
+      -webkit-appearance: none; text-decoration: none;
     }
-
-    .range-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.6rem;
-      color: #444;
-      margin-top: 2px;
-    }
-
-    .quality-val {
-      font-size: 0.72rem;
-      font-weight: 600;
-      float: right;
-    }
-
-    .upload-btn {
-      display: block;
-      width: 100%;
-      background: #FFE033;
-      color: #111;
-      border: none;
-      border-radius: 14px;
-      font-size: 1rem;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      padding: 16px;
-      cursor: pointer;
-      text-align: center;
-      margin-bottom: 14px;
-      -webkit-appearance: none;
-    }
-
-    .upload-btn:active { opacity: 0.85; }
-    .upload-btn:disabled { background: #2a2a2a; color: #555; }
-
+    .btn:active { opacity: 0.85; }
+    .btn-yellow { background: #FFE033; color: #111; }
+    .btn-green { background: #1a4a1a; color: #88dd88; border: 1px solid #2a6a2a; }
+    .btn:disabled { background: #2a2a2a !important; color: #555 !important; }
     #fileInput { display: none; }
-
-    .progress-wrap {
-      display: none;
-      margin-bottom: 14px;
-    }
-
-    .progress-top {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.72rem;
-      color: #888;
-      margin-bottom: 6px;
-    }
-
-    .progress-bar-bg {
-      background: #222;
-      border-radius: 99px;
-      height: 8px;
-      overflow: hidden;
-    }
-
-    .progress-bar-fill {
-      height: 100%;
-      background: #FFE033;
-      border-radius: 99px;
-      width: 0%;
-      transition: width 0.2s ease;
-    }
-
-    .results-header {
-      display: none;
-      font-size: 0.65rem;
-      color: #555;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 30px;
-    }
-
-    .photo-card {
-      background: #1e1e1e;
-      border-radius: 10px;
-      overflow: hidden;
-      border: 1px solid #2a2a2a;
-    }
-
-    .photo-card img {
-      width: 100%;
-      display: block;
-    }
-
+    .progress-wrap { display: none; margin-bottom: 14px; }
+    .progress-top { display: flex; justify-content: space-between; font-size: 0.72rem; color: #888; margin-bottom: 6px; }
+    .progress-bar-bg { background: #222; border-radius: 99px; height: 8px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: #FFE033; border-radius: 99px; width: 0%; transition: width 0.2s ease; }
+    .results-header { display: none; font-size: 0.65rem; color: #555; text-transform: uppercase; letter-spacing: 0.1em; text-align: center; margin-bottom: 10px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 30px; }
+    .photo-card { background: #1e1e1e; border-radius: 10px; overflow: hidden; border: 1px solid #2a2a2a; }
+    .photo-card img { width: 100%; display: block; }
     .photo-card a.save-btn {
-      display: block;
-      text-align: center;
-      background: #1a3a1a;
-      color: #88dd88;
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 8px;
-      text-decoration: none;
-      letter-spacing: 0.04em;
+      display: block; text-align: center; background: #1a3a1a; color: #88dd88;
+      font-size: 0.75rem; font-weight: 700; padding: 8px; text-decoration: none; letter-spacing: 0.04em;
     }
-
-    .save-tip {
-      display: none;
-      background: #1a1a2a;
-      border: 1px solid #2a2a4a;
-      border-radius: 12px;
-      padding: 14px 16px;
-      font-size: 0.78rem;
-      color: #8888cc;
-      line-height: 1.5;
-      margin-bottom: 14px;
-      text-align: center;
-    }
+    .zip-wrap { display: none; margin-bottom: 14px; }
+    .save-tip { display: none; background: #1a1a2a; border: 1px solid #2a2a4a; border-radius: 12px; padding: 14px 16px; font-size: 0.78rem; color: #8888cc; line-height: 1.5; margin-bottom: 14px; text-align: center; }
   </style>
 </head>
 <body>
@@ -241,7 +96,7 @@
 </div>
 
 <input type="file" id="fileInput" accept="image/*" multiple>
-<button class="upload-btn" id="uploadBtn" onclick="document.getElementById('fileInput').click()">
+<button class="btn btn-yellow" id="uploadBtn" onclick="document.getElementById('fileInput').click()">
   📷 Kies foto's
 </button>
 
@@ -255,9 +110,12 @@
   </div>
 </div>
 
+<div class="zip-wrap" id="zipWrap">
+  <button class="btn btn-green" id="zipBtn" onclick="downloadZip()">📦 Download alles als zip</button>
+</div>
+
 <div class="save-tip" id="saveTip">
-  Tik op <strong>⬇ Bewaar</strong> onder elke foto om op te slaan.<br>
-  Of houd je vinger op een foto en tik "Bewaar in foto's".
+  Tik op <strong>⬇ Bewaar</strong> onder elke foto, of download alles in één keer via de zip-knop.
 </div>
 
 <div class="results-header" id="resultsHeader">Verwerkte foto's</div>
@@ -266,9 +124,9 @@
 <script>
   const qualitySlider = document.getElementById('quality');
   const qualityVal = document.getElementById('qualityVal');
-  qualitySlider.addEventListener('input', () => {
-    qualityVal.textContent = qualitySlider.value + '%';
-  });
+  qualitySlider.addEventListener('input', () => { qualityVal.textContent = qualitySlider.value + '%'; });
+
+  let processedFiles = [];
 
   document.getElementById('fileInput').addEventListener('change', async (e) => {
     const files = [...e.target.files];
@@ -287,24 +145,19 @@
     const grid = document.getElementById('grid');
     const saveTip = document.getElementById('saveTip');
     const resultsHeader = document.getElementById('resultsHeader');
+    const zipWrap = document.getElementById('zipWrap');
 
     btn.disabled = true;
     btn.textContent = 'Bezig...';
     grid.innerHTML = '';
+    processedFiles = [];
     progressWrap.style.display = 'block';
     saveTip.style.display = 'none';
     resultsHeader.style.display = 'none';
+    zipWrap.style.display = 'none';
 
     let done = 0;
     const total = files.length;
-
-    const updateProgress = () => {
-      done++;
-      const pct = Math.round((done / total) * 100);
-      progressFill.style.width = pct + '%';
-      progressText.textContent = `${done} van ${total} klaar`;
-      progressPct.textContent = pct + '%';
-    };
 
     const processOne = (file) => new Promise((resolve) => {
       const img = new Image();
@@ -313,13 +166,11 @@
         const scale = img.width > maxW ? maxW / img.width : 1;
         const w = Math.round(img.width * scale);
         const h = Math.round(img.height * scale);
-
         const canvas = document.createElement('canvas');
         canvas.width = w;
         canvas.height = h;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, w, h);
-
         const fs = Math.round(w * fontSize);
         ctx.font = `bold ${fs}px -apple-system, Arial, sans-serif`;
         ctx.fillStyle = '#FFFF00';
@@ -330,47 +181,74 @@
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
         ctx.fillText(label, w / 2, h * posY);
-
         const dataUrl = canvas.toDataURL('image/jpeg', quality);
-        updateProgress();
-        resolve({ dataUrl, name: file.name });
+        done++;
+        const pct = Math.round((done / total) * 100);
+        progressFill.style.width = pct + '%';
+        progressText.textContent = `${done} van ${total} klaar`;
+        progressPct.textContent = pct + '%';
+        const safeName = `${label.replace(/\s/g, '_')}_${file.name.replace(/\.[^.]+$/, '')}.jpg`;
+        resolve({ dataUrl, name: safeName });
       };
       img.src = URL.createObjectURL(file);
     });
 
-    // Verwerk parallel, max 4 tegelijk om geheugen te sparen
-    const results = new Array(files.length);
     const concurrency = 4;
+    const results = new Array(files.length);
     let idx = 0;
-
     const worker = async () => {
       while (idx < files.length) {
         const i = idx++;
         results[i] = await processOne(files[i]);
       }
     };
+    await Promise.all(Array.from({ length: Math.min(concurrency, files.length) }, worker));
 
-    const workers = Array.from({ length: Math.min(concurrency, files.length) }, worker);
-    await Promise.all(workers);
+    processedFiles = results;
 
-    // Toon resultaten
     results.forEach(({ dataUrl, name }) => {
-      const safeName = `${label.replace(/\s/g, '_')}_${name.replace(/\.[^.]+$/, '')}.jpg`;
       const card = document.createElement('div');
       card.className = 'photo-card';
       card.innerHTML = `
         <img src="${dataUrl}" alt="${name}">
-        <a href="${dataUrl}" download="${safeName}" class="save-btn">⬇ Bewaar</a>
+        <a href="${dataUrl}" download="${name}" class="save-btn">⬇ Bewaar</a>
       `;
       grid.appendChild(card);
     });
 
     btn.disabled = false;
-    btn.textContent = '📷 Kies foto\'s';
+    btn.textContent = "📷 Kies foto's";
     saveTip.style.display = 'block';
     resultsHeader.style.display = 'block';
+    zipWrap.style.display = 'block';
     e.target.value = '';
   });
+
+  async function downloadZip() {
+    const zipBtn = document.getElementById('zipBtn');
+    zipBtn.disabled = true;
+    zipBtn.textContent = 'Zip maken...';
+
+    const zip = new JSZip();
+    const label = document.getElementById('labelInput').value.trim() || 'SC1';
+    const folderName = label.replace(/\s/g, '_');
+    const folder = zip.folder(folderName);
+
+    processedFiles.forEach(({ dataUrl, name }) => {
+      const base64 = dataUrl.split(',')[1];
+      folder.file(name, base64, { base64: true });
+    });
+
+    const blob = await zip.generateAsync({ type: 'blob', compression: 'STORE' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${folderName}.zip`;
+    a.click();
+
+    zipBtn.disabled = false;
+    zipBtn.textContent = '📦 Download alles als zip';
+  }
 </script>
 
 </body>
