@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MUA Set">
+  <title>MUA Continuïteit</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background: #111;
+      color: #f0f0f0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      min-height: 100vh;
+      padding: env(safe-area-inset-top, 20px) 16px env(safe-area-inset-bottom, 20px);
+    }
+
+    header {
+      text-align: center;
+      padding: 24px 0 20px;
+    }
+
+    header h1 {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #FFE033;
+    }
+
+    header p {
+      font-size: 0.72rem;
+      color: #555;
+      margin-top: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    .card {
+      background: #1e1e1e;
+      border: 1px solid #2a2a2a;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    .field-label {
+      font-size: 0.65rem;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      background: #111;
+      border: 1.5px solid #333;
+      border-radius: 10px;
+      color: #FFE033;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 12px 14px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: #FFE033;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .row .field { flex: 1; }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: #FFE033;
+      margin-top: 6px;
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.6rem;
+      color: #444;
+      margin-top: 2px;
+    }
+
+    .quality-val {
+      font-size: 0.72rem;
+      font-weight: 600;
+      float: right;
+    }
+
+    .upload-btn {
+      display: block;
+      width: 100%;
+      background: #FFE033;
+      color: #111;
+      border: none;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      padding: 16px;
+      cursor: pointer;
+      text-align: center;
+      margin-bottom: 14px;
+      -webkit-appearance: none;
+    }
+
+    .upload-btn:active { opacity: 0.85; }
+    .upload-btn:disabled { background: #2a2a2a; color: #555; }
+
+    #fileInput { display: none; }
+
+    .progress-wrap {
+      display: none;
+      margin-bottom: 14px;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: #888;
+      margin-bottom: 6px;
+    }
+
+    .progress-bar-bg {
+      background: #222;
+      border-radius: 99px;
+      height: 8px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: #FFE033;
+      border-radius: 99px;
+      width: 0%;
+      transition: width 0.2s ease;
+    }
+
+    .results-header {
+      display: none;
+      font-size: 0.65rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .photo-card {
+      background: #1e1e1e;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #2a2a2a;
+    }
+
+    .photo-card img {
+      width: 100%;
+      display: block;
+    }
+
+    .photo-card a.save-btn {
+      display: block;
+      text-align: center;
+      background: #1a3a1a;
+      color: #88dd88;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 8px;
+      text-decoration: none;
+      letter-spacing: 0.04em;
+    }
+
+    .save-tip {
+      display: none;
+      background: #1a1a2a;
+      border: 1px solid #2a2a4a;
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 0.78rem;
+      color: #8888cc;
+      line-height: 1.5;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>MUA Continuïteit</h1>
+  <p>Zet een label op al je setfoto's in één keer</p>
+</header>
+
+<div class="card">
+  <label class="field-label">Scène-label</label>
+  <input type="text" id="labelInput" placeholder="SD1 SC1.08" value="" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+</div>
+
+<div class="card">
+  <div class="row">
+    <div class="field">
+      <label class="field-label">Positie verticaal (%)</label>
+      <input type="range" id="posY" min="50" max="95" value="82">
+      <div class="range-labels"><span>Midden</span><span>Onderaan</span></div>
+    </div>
+    <div class="field">
+      <label class="field-label">Lettergrootte (%)</label>
+      <input type="range" id="fontSize" min="2" max="15" value="7">
+      <div class="range-labels"><span>Klein</span><span>Groot</span></div>
+    </div>
+  </div>
+  <div style="margin-top:14px">
+    <label class="field-label">
+      Kwaliteit
+      <span class="quality-val" id="qualityVal">60%</span>
+    </label>
+    <input type="range" id="quality" min="20" max="90" step="5" value="60">
+    <div class="range-labels"><span>Snel / klein</span><span>Hoge kwaliteit</span></div>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept="image/*" multiple>
+<button class="upload-btn" id="uploadBtn" onclick="document.getElementById('fileInput').click()">
+  📷 Kies foto's
+</button>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-top">
+    <span id="progressText">0 van 0 klaar</span>
+    <span id="progressPct">0%</span>
+  </div>
+  <div class="progress-bar-bg">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+</div>
+
+<div class="save-tip" id="saveTip">
+  Tik op <strong>⬇ Bewaar</strong> onder elke foto om op te slaan.<br>
+  Of houd je vinger op een foto en tik "Bewaar in foto's".
+</div>
+
+<div class="results-header" id="resultsHeader">Verwerkte foto's</div>
+<div class="grid" id="grid"></div>
+
+<script>
+  const qualitySlider = document.getElementById('quality');
+  const qualityVal = document.getElementById('qualityVal');
+  qualitySlider.addEventListener('input', () => {
+    qualityVal.textContent = qualitySlider.value + '%';
+  });
+
+  document.getElementById('fileInput').addEventListener('change', async (e) => {
+    const files = [...e.target.files];
+    if (!files.length) return;
+
+    const label = document.getElementById('labelInput').value.trim() || 'SC1';
+    const posY = parseInt(document.getElementById('posY').value) / 100;
+    const fontSize = parseInt(document.getElementById('fontSize').value) / 100;
+    const quality = parseInt(document.getElementById('quality').value) / 100;
+
+    const btn = document.getElementById('uploadBtn');
+    const progressWrap = document.getElementById('progressWrap');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const progressPct = document.getElementById('progressPct');
+    const grid = document.getElementById('grid');
+    const saveTip = document.getElementById('saveTip');
+    const resultsHeader = document.getElementById('resultsHeader');
+
+    btn.disabled = true;
+    btn.textContent = 'Bezig...';
+    grid.innerHTML = '';
+    progressWrap.style.display = 'block';
+    saveTip.style.display = 'none';
+    resultsHeader.style.display = 'none';
+
+    let done = 0;
+    const total = files.length;
+
+    const updateProgress = () => {
+      done++;
+      const pct = Math.round((done / total) * 100);
+      progressFill.style.width = pct + '%';
+      progressText.textContent = `${done} van ${total} klaar`;
+      progressPct.textContent = pct + '%';
+    };
+
+    const processOne = (file) => new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const maxW = 1600;
+        const scale = img.width > maxW ? maxW / img.width : 1;
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+
+        const fs = Math.round(w * fontSize);
+        ctx.font = `bold ${fs}px -apple-system, Arial, sans-serif`;
+        ctx.fillStyle = '#FFFF00';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.shadowColor = 'rgba(0,0,0,0.7)';
+        ctx.shadowBlur = Math.round(fs * 0.2);
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+        ctx.fillText(label, w / 2, h * posY);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        updateProgress();
+        resolve({ dataUrl, name: file.name });
+      };
+      img.src = URL.createObjectURL(file);
+    });
+
+    // Verwerk parallel, max 4 tegelijk om geheugen te sparen
+    const results = new Array(files.length);
+    const concurrency = 4;
+    let idx = 0;
+
+    const worker = async () => {
+      while (idx < files.length) {
+        const i = idx++;
+        results[i] = await processOne(files[i]);
+      }
+    };
+
+    const workers = Array.from({ length: Math.min(concurrency, files.length) }, worker);
+    await Promise.all(workers);
+
+    // Toon resultaten
+    results.forEach(({ dataUrl, name }) => {
+      const safeName = `${label.replace(/\s/g, '_')}_${name.replace(/\.[^.]+$/, '')}.jpg`;
+      const card = document.createElement('div');
+      card.className = 'photo-card';
+      card.innerHTML = `
+        <img src="${dataUrl}" alt="${name}">
+        <a href="${dataUrl}" download="${safeName}" class="save-btn">⬇ Bewaar</a>
+      `;
+      grid.appendChild(card);
+    });
+
+    btn.disabled = false;
+    btn.textContent = '📷 Kies foto\'s';
+    saveTip.style.display = 'block';
+    resultsHeader.style.display = 'block';
+    e.target.value = '';
+  });
+</script>
+
+</body>
+</html>
