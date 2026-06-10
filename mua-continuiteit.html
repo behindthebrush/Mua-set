@@ -8,7 +8,6 @@
   <meta name="apple-mobile-web-app-title" content="BTB Set">
   <title>BTB Continuïteit</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -354,7 +353,7 @@
   <div class="grid" id="grid"></div>
 
   <div class="action-wrap" id="actionWrap">
-    <button class="btn-zip" id="zipBtn" onclick="downloadZip()"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="#fff" stroke-width="2"/><path d="M4 7l8 6 8-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="zipLabel">Download alles als zip</span></button>
+    <button class="btn-zip" id="zipBtn" onclick="downloadAll()"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 15V4M12 4L8.5 7.5M12 4l3.5 3.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="rotate(180 12 12)"/><path d="M5 14v3a2 2 0 002 2h10a2 2 0 002-2v-3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="zipLabel">Download alles</span></button>
     <button class="btn-reset" onclick="resetApp()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3" stroke="#BDACD5" stroke-width="2" stroke-linecap="round"/><path d="M17.8 3.5l.2 3.5-3.5.2" stroke="#BDACD5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Opnieuw starten</span></button>
   </div>
 
@@ -444,21 +443,20 @@
     e.target.value = '';
   });
 
-  async function downloadZip() {
+  async function downloadAll() {
     const zipBtn = document.getElementById('zipBtn');
-    zipBtn.disabled = true; document.getElementById('zipLabel').textContent = 'Zip maken...';
-    const zip = new JSZip();
-    const label = document.getElementById('labelInput').value.trim() || 'SC1';
-    const folder = zip.folder(label.replace(/\s/g, '_'));
-    processedFiles.forEach(function(r) {
-      folder.file(r.name, r.dataUrl.split(',')[1], { base64: true });
-    });
-    const blob = await zip.generateAsync({ type: 'blob', compression: 'STORE' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = label.replace(/\s/g, '_') + '.zip';
-    a.click();
-    zipBtn.disabled = false; document.getElementById('zipLabel').textContent = 'Download alles als zip';
+    zipBtn.disabled = true;
+    const total = processedFiles.length;
+    for (let i = 0; i < total; i++) {
+      document.getElementById('zipLabel').textContent = 'Downloaden ' + (i + 1) + '/' + total + '...';
+      const a = document.createElement('a');
+      a.href = processedFiles[i].dataUrl;
+      a.download = processedFiles[i].name;
+      a.click();
+      await new Promise(r => setTimeout(r, 800));
+    }
+    zipBtn.disabled = false;
+    document.getElementById('zipLabel').textContent = 'Download alles';
   }
 
   function resetApp() {
