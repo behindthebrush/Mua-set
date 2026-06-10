@@ -184,7 +184,7 @@
     .btn-zip:active { opacity: 0.85; }
     .btn-zip:disabled { opacity: 0.5; }
 
-    .btn-reset { width: 100%; background: transparent; color: #BDACD5; border: 1.5px solid #FFD7E6; border-radius: 16px; font-size: 0.88rem; font-weight: 600; font-family: 'DM Sans', sans-serif; padding: 14px; cursor: pointer; }
+    .btn-reset { display: inline-flex; align-items: center; justify-content: center; gap: 8px; line-height: 1; width: 100%; background: transparent; color: #BDACD5; border: 1.5px solid #FFD7E6; border-radius: 16px; font-size: 0.88rem; font-weight: 600; font-family: 'DM Sans', sans-serif; padding: 14px; cursor: pointer; }
 
     .save-tip { display: none; background: #FFD7E6; border-radius: 16px; padding: 11px 16px; font-size: 0.74rem; color: #3E2F47; font-weight: 500; text-align: center; margin-bottom: 14px; line-height: 1.5; }
 
@@ -344,12 +344,12 @@
     <div class="progress-bg"><div class="progress-fill" id="progressFill"></div></div>
   </div>
 
-  <div class="save-tip" id="saveTip">Tik Bewaar per foto of download alles als zip.</div>
+  <div class="save-tip" id="saveTip">Houd een foto lang ingedrukt en tik op "Bewaar in foto's", of download ze in één keer via de knop onderaan.</div>
   <div class="results-label" id="resultsLabel">Verwerkte foto's</div>
   <div class="grid" id="grid"></div>
 
   <div class="action-wrap" id="actionWrap">
-    <button class="btn-zip" id="zipBtn" onclick="downloadAll()"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 9v11M12 20l-3.5-3.5M12 20l3.5-3.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 10v3a2 2 0 002 2h10a2 2 0 002-2v-3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="zipLabel">Download alles</span></button>
+    <button class="btn-zip" id="zipBtn" onclick="downloadAll()"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="#FFD7E6" stroke-width="2"/><path d="M4 7l8 6 8-6" stroke="#FFD7E6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="zipLabel">Download alles</span></button>
     <button class="btn-reset" onclick="resetApp()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3" stroke="#BDACD5" stroke-width="2" stroke-linecap="round"/><path d="M17.8 3.5l.2 3.5-3.5.2" stroke="#BDACD5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Opnieuw starten</span></button>
   </div>
 
